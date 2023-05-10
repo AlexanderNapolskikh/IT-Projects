@@ -33,7 +33,8 @@ const float FACECOEFF_W = CATCH_SPLIT_W * WELL_VIEW_W;
 const float FACECOEFF_H = CATCH_SPLIT_H * WELL_VIEW_H;
 
 // Расположение ворот для выхода из коробки
-const sf::Vector2u GATES(((WIDTH_MAP - 1.15)* FACECOEFF_W) / 2, HEIGHT_MAP* FACECOEFF_H * 0.4);
+const sf::Vector2u GATES(13 * FACECOEFF_W + FACECOEFF_W * 0.5, 14 * FACECOEFF_H);
+//(((WIDTH_MAP - 1.15)* FACECOEFF_W) / 2, HEIGHT_MAP* FACECOEFF_H * 0.4)
 
 // Направления NPC и игрока
 enum objectRotation {
@@ -68,7 +69,7 @@ struct PacMan {
 
 	// Начальная инициализация элементов структуры
 	void startInit(float X, float Y, objectRotation rotS) {
-		
+
 		curr_X = X;
 		curr_Y = Y;
 
@@ -94,16 +95,16 @@ struct PacMan {
 			switch (rotSide)
 			{
 			case LEFT:
-				buf_X-= SPEDD_PAC;
+				buf_X -= SPEDD_PAC;
 				break;
 			case RIGHT:
-				buf_X+= SPEDD_PAC;
+				buf_X += SPEDD_PAC;
 				break;
 			case UP:
-				buf_Y-= SPEDD_PAC;
+				buf_Y -= SPEDD_PAC;
 				break;
 			case DOWN:
-				buf_Y+= SPEDD_PAC;
+				buf_Y += SPEDD_PAC;
 				break;
 			default:
 				break;
@@ -167,8 +168,14 @@ struct Ghost {
 	// Замедление изображения
 	float timer = 0.0;
 	// __________________________
+	// Поправляющий элемент при генерации маршрута
+	float correct_X = FACECOEFF_W;
+	float correct_Y = FACECOEFF_H;
+	// __________________________
 	// Флаг выхода
 	bool flag = false;
+	// __________________________
+	// Флаг охоты
 	bool hunt = false;
 	// __________________________
 
@@ -186,15 +193,15 @@ struct Ghost {
 
 	// Выход из коробки
 	void ghostOut() {
-
 		flag = !flag;
 	}
 
+	// Проверка возможности прохода в заданном направлении
 	bool canPass(float check_Y, float check_X) {
 
-		if (gameField[(int)round(check_Y / FACECOEFF_H)][(int)round(check_X / FACECOEFF_W)] == '.'
-			|| gameField[(int)round(check_Y / FACECOEFF_H)][(int)round(check_X / FACECOEFF_W)] == '_'
-			|| gameField[(int)round(check_Y / FACECOEFF_H)][(int)round(check_X / FACECOEFF_W)] == '*') {
+		if (gameField[(int)round(check_Y / FACECOEFF_H)][(int)round((check_X / FACECOEFF_W) + 0.5)] == '.'
+			|| gameField[(int)round(check_Y / FACECOEFF_H)][(int)round((check_X / FACECOEFF_W) + 0.5)] == '_'
+			|| gameField[(int)round(check_Y / FACECOEFF_H)][(int)round((check_X / FACECOEFF_W) + 0.5)] == '*') {
 
 			return true;
 		}
@@ -202,20 +209,28 @@ struct Ghost {
 			return false;
 		}
 	}
-	
-	// Изменение направления при движении в коробке
-	objectRotation changeSideBox() {
+
+	// Изменение направления при движении
+	objectRotation changeSide() {
 
 		if (rotSide == UP) {
+			correct_Y = FACECOEFF_H;
+			correct_X = 0.0;
 			return DOWN;
 		}
 		else if (rotSide == DOWN) {
+			correct_Y = -1 * FACECOEFF_H;
+			correct_X = 0.0;
 			return UP;
 		}
 		else if (rotSide == RIGHT) {
+			correct_X = -1 * FACECOEFF_W;
+			correct_Y = 0.0;
 			return LEFT;
 		}
 		else if (rotSide == LEFT) {
+			correct_X = FACECOEFF_W;
+			correct_Y = 0.0;
 			return RIGHT;
 		}
 	}
@@ -224,14 +239,18 @@ struct Ghost {
 	bool goToExit() {
 
 		if (round(buf_X) == GATES.x && round(buf_Y) == GATES.y) {
+
+			hunt = true;
 			return true;
-		}else if (round(buf_X) > GATES.x) {
+		}
+		else if (round(buf_X) > GATES.x) {
 			buf_X -= 0.1;
 		}
 		else if (round(buf_X) < GATES.x)
 		{
 			buf_X += 0.1;
-		} else if (round(buf_Y) > GATES.y) {
+		}
+		else if (round(buf_Y) > GATES.y) {
 			buf_Y -= 0.1;
 		}
 		else
@@ -242,122 +261,219 @@ struct Ghost {
 		return false;
 	}
 
-	// Проверка одинакового направления и отрицательного
-	// Н-р: текущее UP - можно Left or Right при столкновении
-	bool rightDir(objectRotation dir) {
+	// Изменение параметров корректировки
+	void changeRouteOptions() {
 
-		float check_X = curr_X;
-		float check_Y = curr_Y;
-
-		switch (dir)
-		{
-		case RIGHT:
-			check_X -= speed;
-			break;
-		case LEFT:
-			check_X += speed;
-			break;
-		case UP:
-			check_Y -= speed;
-			break;
-		case DOWN:
-			check_Y += speed;
-			break;
-		default:
-			break;
+		if (rotSide == UP) {
+			correct_Y = -1 * FACECOEFF_H;
+			correct_X = 0.0;
 		}
-
-		if (((int(dir) >= 2 && int(rotSide) <= 1) || (int(dir) <= 1 && int(rotSide) >= 2)) && canPass(check_Y,check_X)) {
-			return true;
+		else if (rotSide == DOWN) {
+			correct_Y = FACECOEFF_H;
+			correct_X = 0.0;
 		}
-
-		if (dir == rotSide || dir == objectRotation(int(rotSide) + 1)) { // LEFT - 0 RIGHT - 1 ==> если текущее left, то не должно выпасть ни left, ни right также для UP и DOWN
-		
-			return false;
+		else if (rotSide == RIGHT) {
+			correct_X = FACECOEFF_W * 0.5;
+			correct_Y = 0.0;
 		}
-		else if (dir == rotSide || dir == objectRotation(int(rotSide) - 1)) { // Наоборот RIGHT - 1 LEFT - 0 ...
-
-			return false;
+		else if (rotSide == LEFT) {
+			correct_X = -1 * FACECOEFF_W * 0.5;
+			correct_Y = 0.0;
 		}
-		else 
-			return true;
 	}
 
-	// Последовательность направлений без повторений и обратных направлений
-	// Повышение уникальности построения маршрута призрака
-	objectRotation plotAroute() {
+	// Построение хаотичного маршрута призрака ( искючается вариант хода по той же линии в обратном направлении )
+	bool plotWay() {
 
-		objectRotation dirOut;
-		
-		do
-		{
-			dirOut = objectRotation(random(0, 3));
-		} while (!rightDir(dirOut));
-		
-		return dirOut;
-	}
+		// Флаги возможностей перенаправления
+		bool flag_R, flag_L, flag_U, flag_D;
 
-	// Возможность захода в поворот, который находится на пути призрака
-	bool tryGoDironWay() {
-
+		// Ход вверх или вниз
 		if (rotSide == UP || rotSide == DOWN) {
+
+			flag_R = false;
+			flag_L = false;
+
+			// Проверка выхода к пересечению(или перекрестку)
+			// _____________________________________________________________________________________________________________
 
 			// Right
 			if (canPass(buf_Y, buf_X + FACECOEFF_W)) {
-				return true;
+				flag_R = true;
 			}
-			
+
 			// Left
 			if (canPass(buf_Y, buf_X - FACECOEFF_W)) {
-				return true;
+				flag_L = true;
+			}
+
+			//______________________________________________________________________________________________________________
+
+			// Принятие решения исходя из полученных данных в пространстве
+			if (flag_R && flag_L) {
+
+				if (canPass(buf_Y + FACECOEFF_H * ((rotSide == UP) ? -1 : 1), buf_X)) {
+
+					if (random(0, 100) <= 50) {
+
+						rotSide = objectRotation(random(0, 1));
+						return true;
+					}
+					else {
+						rotSide = rotSide;
+						return true;
+					}
+				}
+				else {
+					rotSide = objectRotation(random(0, 1));
+					return true;
+				}
+
+			}
+			else if (flag_R) {
+
+				if (canPass(buf_Y + FACECOEFF_H * ((rotSide == UP) ? -1 : 1), buf_X)) {
+
+					if (random(0, 100) <= 50) {
+
+						rotSide = RIGHT;
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					rotSide = RIGHT;
+					return true;
+				}
+			}
+			else if (flag_L) {
+
+				if (canPass(buf_Y + FACECOEFF_H * ((rotSide == UP) ? -1 : 1), buf_X)) {
+
+					if (random(0, 100) <= 50) {
+
+						rotSide = LEFT;
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					rotSide = LEFT;
+					return true;
+				}
 			}
 
 		}
+		// Ход вправо или влево
 		else if (rotSide == RIGHT || rotSide == LEFT) {
 
+			flag_U = false;
+			flag_D = false;
+
+			// Проверка выхода к пересечению(или перекрестку)
+			// _____________________________________________________________________________________________________________
+
 			// Up
-			if (canPass(buf_Y - FACECOEFF_H, buf_X)) {
-				return true;
+			if (canPass(buf_Y + FACECOEFF_H, buf_X)) {
+				flag_U = true;
 			}
 
 			// Down
-			if (canPass(buf_Y + FACECOEFF_H, buf_X)) {
-				return true;
+			if (canPass(buf_Y - FACECOEFF_H, buf_X)) {
+				flag_D = true;
 			}
 
+			//______________________________________________________________________________________________________________
+
+			// Принятие решения исходя из полученных данных в пространстве
+
+			if (flag_U && flag_D) {
+
+				if (canPass(buf_Y, buf_X + FACECOEFF_W * ((rotSide == LEFT) ? -1 : 1))) {
+
+					if (random(0, 100) <= 50) {
+
+						rotSide = objectRotation(random(2, 3));
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					rotSide = objectRotation(random(2, 3));
+					return true;
+				}
+			}
+			else if (flag_U) {
+
+				if (canPass(buf_Y, buf_X + FACECOEFF_W * ((rotSide == LEFT) ? -1 : 1))) {
+
+					if (random(0, 100) <= 50) {
+
+						rotSide = UP;
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					rotSide = UP;
+					return true;
+				}
+			}
+			else if (flag_D) {
+
+				if (canPass(buf_Y, buf_X + FACECOEFF_W * ((rotSide == LEFT) ? -1 : 1))) {
+
+					if (random(0, 100) <= 50) {
+
+						rotSide = DOWN;
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+				else {
+					rotSide = DOWN;
+					return true;
+				}
+			}
 		}
 
-		return false;
 	}
 
 	// Движение и обновление
 	void update() {
 
+		// Таймер плавного перемещения
 		timer += STEP_TIMER;
 
+		// Прохождение временного ингтервала и обновление
 		if (timer >= 1) {
 
 			// Выставление прошлых данных для изменения и записи, а также сохранения тех же прошлых для возможности отката
 			buf_X = curr_X;
 			buf_Y = curr_Y;
 
-			// Проверка сторонних проходов
-			if(hunt)
-				tryGoDironWay();
-
 			if (flag)
 			{
 				// Когда срабатывает возможность выхода призрака, то он немедленно отправляется к выходу, после чего вернуться обратно он не может.
-				if (goToExit()) { 
-
+				if (goToExit()) {
 					flag = false;
-					hunt = true;
 				}
 
 				// Обновление значений позиции
 				curr_X = buf_X;
 				curr_Y = buf_Y;
 
+				// Ускорение для выхода призракак из коробки
 				return;
 			}
 			else {
@@ -402,32 +518,29 @@ struct Ghost {
 			return;
 		}
 
-
-		if (canPass(buf_Y, buf_X)){
+		// Продолжение пути
+		if (canPass(buf_Y + correct_Y, buf_X + correct_X)) {
 
 			// Выбор направления из имеющихся
 			// Свободное движение по карте
-
 			// Обновление значений позиции
 			curr_X = buf_X;
 			curr_Y = buf_Y;
 		}
-		else if(!flag && !hunt){
-			/* Задержка в коробке*/
+		// Решение о изменении направления
+		else {
 
-			rotSide = changeSideBox();
+			if (hunt) {
+
+				if (plotWay())
+					changeRouteOptions();
+			}
+			else /* Задержка в коробке*/
+				rotSide = changeSide();
+
 			// Возвращение к прошлой координате с целью перенаправления
 			buf_X = curr_X;
 			buf_Y = curr_Y;
-		}
-		else if(hunt){
-			/* Столкновения*/
-
-			rotSide = plotAroute();
-			// Возвращение для перенаправления
-			buf_X = curr_X;
-			buf_Y = curr_Y;
-			
 		}
 
 	}
