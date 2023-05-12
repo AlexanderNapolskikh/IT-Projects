@@ -13,11 +13,15 @@ c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h
           [
               T=unsigned int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(121): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(247): warning C4305: '-=': truncation from 'double' to 'float'
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(251): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(254): warning C4305: '-=': truncation from 'double' to 'float'
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(258): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(124): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(211): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(212): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(230): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(418): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(422): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(425): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(429): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(444): warning C4305: '+=': truncation from 'double' to 'float'
 c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(508): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(6): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
           with
@@ -75,32 +79,32 @@ c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cp
           [
               T=int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(118): warning C4244: 'argument': conversion from 'const float' to 'T', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(119): warning C4244: 'argument': conversion from 'const float' to 'T', possible loss of data
           with
           [
               T=int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(118): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(119): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
           with
           [
               T=int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(126): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(145): warning C4244: 'argument': conversion from 'const float' to 'T', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(127): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(154): warning C4244: 'argument': conversion from 'const float' to 'T', possible loss of data
           with
           [
               T=int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(149): warning C4244: 'argument': conversion from 'const float' to 'T', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(158): warning C4244: 'argument': conversion from 'const float' to 'T', possible loss of data
           with
           [
               T=int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(149): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\pac-man.cpp(158): warning C4244: 'argument': conversion from 'float' to 'T', possible loss of data
           with
           [
               T=int
           ]
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(450): warning C4715: 'Ghost::plotWay': not all control paths return a value
-c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(236): warning C4715: 'Ghost::changeSide': not all control paths return a value
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(390): warning C4715: 'Ghost::plotWay': not all control paths return a value
+c:\users\user\desktop\it-step\c++projects\it-projects\pac-man\pac-man\graphics.h(407): warning C4715: 'Ghost::changeSide': not all control paths return a value
   Pac-Man.vcxproj -> C:\Users\user\Desktop\IT-Step\C++Projects\IT-Projects\Pac-Man\Debug\Pac-Man.exe

@@ -112,6 +112,7 @@ int main()
         // __________________________________________________________________________________
 
         // Рисовка призраков
+        // test
         for (int i = 0; i < 4; i++)
         {
             ghosts[i].update();
@@ -128,6 +129,14 @@ int main()
         if (time_counter > 20) {
             ghosts[ind_ghostOut++].ghostOut();
             time_counter = 0.0;
+        }
+
+        // Окончание игры ( Проигрыш из-за столкновения с призраком)
+        for (int i = 0; i < 4; i++)
+        {
+            if ( abs(pac.curr_X - ghosts[i].curr_X) < SPEDD_PAC && abs(pac.curr_Y - ghosts[i].curr_Y) < SPEDD_PAC) {
+                return 0;
+            }
         }
 
         //spriteNPC.setTextureRect(IntRect((2 * 0) * (CATCH_SPLIT_W - 1), 3 * (CATCH_SPLIT_H), CATCH_SPLIT_W, CATCH_SPLIT_H));
@@ -156,6 +165,12 @@ int main()
                 spriteObject.setPosition(float(j * FACECOEFF_W), float(i * FACECOEFF_H));
                 window.draw(spriteObject);
             }
+        }
+
+        // Выигрыш при условии съедения всех точек
+        if (pac.score == 480) {
+            MessageBoxA(NULL, "_YOU WIN_ !", "You're a handsome man", MB_OK | MB_ICONEXCLAMATION);
+            return 0;
         }
 
         window.display();

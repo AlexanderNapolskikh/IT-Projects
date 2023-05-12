@@ -2,6 +2,7 @@
 
 // Включение необходимых библиотек и пространств
 #include "Graphics.h"
+#include <Windows.h>
 using namespace sf;
 
 // Корректная резка прямоугольников
